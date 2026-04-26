@@ -1,7 +1,28 @@
-FROM eclipse-temurin:25-jdk-alpine
-VOLUME /tmp
-COPY *.jar babyshower.jar
-ENV JAVA_OPTS=" -Xshareclasses:name=cacheapp,cacheDir=/cache,nonfatal -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
-# Replace with a non-root user to avoid running the container with excessive privileges
+FROM eclipse-temurin:21-jdk-alpine
+
+# Crear usuario no root (buena práctica obligatoria en clean architecture enterprise)
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar el jar
+COPY *.jar app.jar
+
+# Propiedad del archivo para el usuario no root
+RUN chown appuser:appgroup /app/app.jar
+
+# Variables JVM optimizadas para contenedores
+ENV JAVA_OPTS="\
+-XX:MaxRAMPercentage=70 \
+-XX:+UseContainerSupport \
+-Djava.security.egd=file:/dev/./urandom"
+
+# Cambiar a usuario no root
 USER appuser
-ENTRYPOINT [ "/bin/sh", "-c", "/opt/java/openjdk/bin/java $JAVA_OPTS  -jar /babyshower.jar" ]
+
+# Puerto (opcional pero recomendado si es API)
+EXPOSE 8080
+
+# Ejecutar aplicación
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
