@@ -1,6 +1,7 @@
 package co.com.bancolombia.api.gift;
 
-import co.com.bancolombia.model.gift.Gift;
+import co.com.bancolombia.api.gift.model.GiftResponse;
+import co.com.bancolombia.api.util.ApiResponse;
 import co.com.bancolombia.usecase.gift.GiftsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,17 @@ public class GiftController {
     private final GiftsUseCase getGiftsUseCase;
 
     @GetMapping
-    public List<Gift> getGifts() {
+    public ApiResponse<List<GiftResponse>> getGifts() {
 
-        return getGiftsUseCase.getGifts();
+        List<GiftResponse> response = getGiftsUseCase.getGifts()
+                .stream()
+                .map(gift -> new GiftResponse(
+                        gift.getId().toString(),
+                        gift.getName(),
+                        gift.getStatus().name()
+                ))
+                .toList();
+
+        return new ApiResponse<>(response);
     }
 }
