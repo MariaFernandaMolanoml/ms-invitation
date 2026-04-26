@@ -1,14 +1,15 @@
 package co.com.bancolombia.usecase.invitation;
 
+import co.com.bancolombia.model.constants.Constants;
 import co.com.bancolombia.model.gift.Gift;
 import co.com.bancolombia.model.gift.gateways.GiftRepository;
 import co.com.bancolombia.model.invitations.Invitation;
 import co.com.bancolombia.model.invitations.gateways.InvitationRepository;
 import co.com.bancolombia.model.status.Status;
+import co.com.bancolombia.usecase.exception.InvalidInvitationStateException;
+import co.com.bancolombia.usecase.exception.InvitationNotFoundException;
 import co.com.bancolombia.usecase.exception.NoAvailableGiftsException;
-import co.com.bancolombia.model.status.Status;
 
-import java.util.Date;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -64,16 +65,27 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
         return invitationRepository.findById(id);
     }
     @Override
-    public Invitation acceptInvitation(UUID id) {
+    public Invitation acceptInvitation(UUID id, Long code) {
+
+
 
         Invitation invitation = invitationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invitación no encontrada"));
+                .orElseThrow(InvitationNotFoundException::new);
 
         if (invitation.getStatus() != Status.PENDING) {
-            throw new RuntimeException("La invitación no está en estado válido");
+            throw new InvalidInvitationStateException();
         }
-        invitation.setStatus(Status.ACCEPTED);
-        invitation.setConfirm_date(new Date());
+
+        if (Constants.ACCEPTED_STATUS.equals(code)) {
+            invitation.setStatus(Status.ACCEPTED);
+            invitation.setConfirm_date(new Date());
+        }
+
+        if (Constants.REJECTED_STATUS.equals(code)) {
+            invitation.setStatus(Status.REJECTED);
+            invitation.setConfirm_date(new Date());
+            invitation.setGift(null);
+        }
 
         return invitationRepository.save(invitation);
     }

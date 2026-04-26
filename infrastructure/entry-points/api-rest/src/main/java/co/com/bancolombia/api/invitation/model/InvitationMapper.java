@@ -33,7 +33,7 @@ public class InvitationMapper {
     public static Invitation toDomain(CreateInvitationRequest request) {
         Invitation invitation = new Invitation();
         invitation.setName_person(request.getPersonName());
-        invitation.setNumber_cell(Long.parseLong(request.getPersonPhone()));
+        invitation.setNumber_cell(request.getPersonPhone());
         return invitation;
     }
 }

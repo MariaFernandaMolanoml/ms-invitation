@@ -11,6 +11,6 @@ public interface InvitationUseCase {
 
     Optional<Invitation> getInvitationById(UUID id);
 
-    Invitation acceptInvitation(UUID id);
+    Invitation acceptInvitation(UUID id, Long code);
 
 }

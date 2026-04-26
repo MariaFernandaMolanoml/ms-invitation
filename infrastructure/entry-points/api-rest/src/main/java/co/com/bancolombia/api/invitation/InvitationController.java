@@ -39,7 +39,7 @@ public class InvitationController {
 
         Invitation invitation = new Invitation();
         invitation.setName_person(request.getPersonName());
-        invitation.setNumber_cell(Long.parseLong(request.getPersonPhone()));
+        invitation.setNumber_cell(request.getPersonPhone());
 
         Invitation created = invitationUseCase.createInvitation(invitation);
 
@@ -53,7 +53,8 @@ public class InvitationController {
             @RequestBody AcceptInvitationRequest request) {
 
         Invitation invitation = invitationUseCase.acceptInvitation(
-                UUID.fromString(request.getId())
+                UUID.fromString(request.getId()),
+                Long.parseLong(request.getCode())
         );
 
         return ResponseEntity.ok(InvitationMapper.toResponse(invitation));
