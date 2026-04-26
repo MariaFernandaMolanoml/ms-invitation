@@ -6,7 +6,9 @@ import co.com.bancolombia.model.invitations.Invitation;
 import co.com.bancolombia.model.invitations.gateways.InvitationRepository;
 import co.com.bancolombia.model.status.Status;
 import co.com.bancolombia.usecase.exception.NoAvailableGiftsException;
+import co.com.bancolombia.model.status.Status;
 
+import java.util.Date;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -60,5 +62,19 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
     @Override
     public Optional<Invitation> getInvitationById(UUID id) {
         return invitationRepository.findById(id);
+    }
+    @Override
+    public Invitation acceptInvitation(UUID id) {
+
+        Invitation invitation = invitationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invitación no encontrada"));
+
+        if (invitation.getStatus() != Status.PENDING) {
+            throw new RuntimeException("La invitación no está en estado válido");
+        }
+        invitation.setStatus(Status.ACCEPTED);
+        invitation.setConfirm_date(new Date());
+
+        return invitationRepository.save(invitation);
     }
 }
