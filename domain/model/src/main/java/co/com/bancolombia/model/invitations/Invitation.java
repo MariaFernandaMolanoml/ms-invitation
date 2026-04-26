@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Invitation {
     private UUID id;
     private String name_person;
-    private Long number_cell;
+    private String number_cell;
     private Status status;
     private Date create_date;
     private Date confirm_date;

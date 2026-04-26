@@ -30,7 +30,7 @@ public class InvitationData {
     @Column(name = "name_person")
     private String name_person;
     @Column(name = "number_cell")
-    private Long number_cell;
+    private String number_cell;
 
     @Enumerated(EnumType.STRING)
     private Status status;

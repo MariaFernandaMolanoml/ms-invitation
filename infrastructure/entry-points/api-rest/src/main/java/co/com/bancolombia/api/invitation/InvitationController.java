@@ -1,6 +1,7 @@
 package co.com.bancolombia.api.invitation;
 
 import co.com.bancolombia.api.invitation.model.CreateInvitationRequest;
+import co.com.bancolombia.api.invitation.model.AcceptInvitationRequest;
 import co.com.bancolombia.api.invitation.model.InvitationMapper;
 import co.com.bancolombia.api.invitation.model.InvitationRequest;
 import co.com.bancolombia.api.invitation.model.InvitationResponse;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/invitations")
@@ -36,12 +39,24 @@ public class InvitationController {
 
         Invitation invitation = new Invitation();
         invitation.setName_person(request.getPersonName());
-        invitation.setNumber_cell(Long.parseLong(request.getPersonPhone()));
+        invitation.setNumber_cell(request.getPersonPhone());
 
         Invitation created = invitationUseCase.createInvitation(invitation);
 
         return ResponseEntity
                 .status(201)
                 .body(InvitationMapper.toResponse(created));
+    }
+
+    @PostMapping("/accept")
+    public ResponseEntity<InvitationResponse> acceptInvitation(
+            @RequestBody AcceptInvitationRequest request) {
+
+        Invitation invitation = invitationUseCase.acceptInvitation(
+                UUID.fromString(request.getId()),
+                Long.parseLong(request.getCode())
+        );
+
+        return ResponseEntity.ok(InvitationMapper.toResponse(invitation));
     }
 }
