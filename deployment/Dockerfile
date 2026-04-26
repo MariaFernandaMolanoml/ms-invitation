@@ -1,28 +1,40 @@
+# ===== BUILD STAGE =====
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+WORKDIR /build
+
+# Copiar gradle wrapper y archivos de build
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+
+# Dar permisos al wrapper
+RUN chmod +x gradlew
+
+# Copiar código fuente
+COPY src ./src
+
+# Construir el jar
+RUN ./gradlew clean build -x test
+
+
+# ===== RUNTIME STAGE =====
 FROM eclipse-temurin:21-jdk-alpine
 
-# Crear usuario no root (buena práctica obligatoria en clean architecture enterprise)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Directorio de trabajo
 WORKDIR /app
 
-# Copiar el jar
-COPY *.jar app.jar
+# Copiar el jar generado por Gradle
+COPY --from=builder /build/build/libs/*.jar app.jar
 
-# Propiedad del archivo para el usuario no root
-RUN chown appuser:appgroup /app/app.jar
+RUN chown appuser:appgroup app.jar
 
-# Variables JVM optimizadas para contenedores
-ENV JAVA_OPTS="\
--XX:MaxRAMPercentage=70 \
--XX:+UseContainerSupport \
--Djava.security.egd=file:/dev/./urandom"
-
-# Cambiar a usuario no root
 USER appuser
 
-# Puerto (opcional pero recomendado si es API)
 EXPOSE 8080
 
-# Ejecutar aplicación
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
+
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
