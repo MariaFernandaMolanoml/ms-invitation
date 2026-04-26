@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface GiftRepository {
     List<Gift> findAll();
+    Gift save(Gift gift);
 }
