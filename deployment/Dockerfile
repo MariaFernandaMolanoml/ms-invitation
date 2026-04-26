@@ -1,33 +1,24 @@
-# ===== BUILD STAGE =====
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /build
 
-# Copiar gradle wrapper y archivos de build
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
+# Copiar TODO el proyecto (multi-module)
+COPY . .
 
-# Dar permisos al wrapper
 RUN chmod +x gradlew
 
-# Copiar código fuente
-COPY src ./src
-
-# Construir el jar
+# Construir desde raíz (Gradle maneja los módulos)
 RUN ./gradlew clean build -x test
 
 
-# ===== RUNTIME STAGE =====
 FROM eclipse-temurin:21-jdk-alpine
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-# Copiar el jar generado por Gradle
-COPY --from=builder /build/build/libs/*.jar app.jar
+# Buscar jar generado (ajusta si tienes módulo específico de boot)
+COPY --from=builder /build/**/build/libs/*.jar app.jar
 
 RUN chown appuser:appgroup app.jar
 
