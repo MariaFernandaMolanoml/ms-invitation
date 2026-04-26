@@ -6,8 +6,10 @@ import co.com.bancolombia.model.invitations.Invitation;
 import co.com.bancolombia.model.invitations.gateways.InvitationRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @Repository
 public class InvitationDataRepositoryAdapterImpl implements InvitationRepository {
@@ -21,7 +23,19 @@ public class InvitationDataRepositoryAdapterImpl implements InvitationRepository
 
     @Override
     public Invitation save(Invitation invitation) {
-        return null;
+
+        InvitationData data = toData(invitation);
+
+        InvitationData saved = invitationDataRepository.save(data);
+
+        return toDomain(saved);
+    }
+    @Override
+    public List<Invitation> findAll() {
+        return StreamSupport
+                .stream(invitationDataRepository.findAll().spliterator(), false)
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override
@@ -30,6 +44,27 @@ public class InvitationDataRepositoryAdapterImpl implements InvitationRepository
                 .map(this::toDomain);
     }
 
+    private InvitationData toData(Invitation invitation) {
+        if (invitation == null) {
+            return null;
+        }
+
+        InvitationData data = new InvitationData();
+        data.setId(invitation.getId());
+        data.setName_person(invitation.getName_person());
+        data.setNumber_cell(invitation.getNumber_cell());
+        data.setStatus(invitation.getStatus());
+        data.setCreate_date(invitation.getCreate_date());
+        data.setConfirm_date(invitation.getConfirm_date());
+
+        if (invitation.getGift() != null) {
+            GiftData giftData = new GiftData();
+            giftData.setId(invitation.getGift().getId());
+            data.setGift(giftData);
+        }
+
+        return data;
+    }
     private Invitation toDomain(InvitationData data) {
         if (data == null) {
             return null;
@@ -56,4 +91,5 @@ public class InvitationDataRepositoryAdapterImpl implements InvitationRepository
                 data.getStatus()
         );
     }
+
 }

@@ -17,7 +17,10 @@ public class UseCasesConfig {
         }
 
         @Bean
-        public InvitationUseCaseImpl invitationUseCase (InvitationRepository invitationRepository){
-                return new InvitationUseCaseImpl(invitationRepository);
+        public InvitationUseCaseImpl invitationUseCase(
+                InvitationRepository invitationRepository,
+                GiftRepository giftRepository) {
+
+                return new InvitationUseCaseImpl(invitationRepository, giftRepository);
         }
 }

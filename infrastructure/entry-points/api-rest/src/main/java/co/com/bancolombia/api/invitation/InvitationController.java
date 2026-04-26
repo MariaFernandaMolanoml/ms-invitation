@@ -1,8 +1,10 @@
 package co.com.bancolombia.api.invitation;
 
+import co.com.bancolombia.api.invitation.model.CreateInvitationRequest;
 import co.com.bancolombia.api.invitation.model.InvitationMapper;
 import co.com.bancolombia.api.invitation.model.InvitationRequest;
 import co.com.bancolombia.api.invitation.model.InvitationResponse;
+import co.com.bancolombia.model.invitations.Invitation;
 import co.com.bancolombia.usecase.invitation.InvitationUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +28,20 @@ public class InvitationController {
                 .map(InvitationMapper::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<InvitationResponse> createInvitation(
+            @RequestBody CreateInvitationRequest request) {
+
+        Invitation invitation = new Invitation();
+        invitation.setName_person(request.getPersonName());
+        invitation.setNumber_cell(Long.parseLong(request.getPersonPhone()));
+
+        Invitation created = invitationUseCase.createInvitation(invitation);
+
+        return ResponseEntity
+                .status(201)
+                .body(InvitationMapper.toResponse(created));
     }
 }
