@@ -23,11 +23,28 @@ public class GiftRepositoryAdapterImpl implements GiftRepository {
                 .toList();
     }
 
+    @Override
+    public Gift save(Gift gift) {
+
+        GiftData data = toData(gift);
+        GiftData saved = repository.save(data);
+
+        return toDomain(saved);
+    }
+
     private Gift toDomain(GiftData data) {
         return new Gift(
                 data.getId(),
                 data.getName(),
                 data.getStatus()
         );
+    }
+
+    private GiftData toData(Gift gift) {
+        GiftData data = new GiftData();
+        data.setId(gift.getId());
+        data.setName(gift.getName());
+        data.setStatus(gift.getStatus());
+        return data;
     }
 }

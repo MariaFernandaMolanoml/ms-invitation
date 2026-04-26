@@ -67,8 +67,6 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
     @Override
     public Invitation acceptInvitation(UUID id, Long code) {
 
-
-
         Invitation invitation = invitationRepository.findById(id)
                 .orElseThrow(InvitationNotFoundException::new);
 
@@ -77,14 +75,27 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
         }
 
         if (Constants.ACCEPTED_STATUS.equals(code)) {
+
             invitation.setStatus(Status.ACCEPTED);
             invitation.setConfirm_date(new Date());
+
+            Gift gift = invitation.getGift();
+            if (gift != null) {
+                gift.setStatus(Status.ACCEPTED);
+                giftRepository.save(gift);
+            }
         }
 
         if (Constants.REJECTED_STATUS.equals(code)) {
+
             invitation.setStatus(Status.REJECTED);
             invitation.setConfirm_date(new Date());
-            invitation.setGift(null);
+
+            Gift gift = invitation.getGift();
+            if (gift != null) {
+                gift.setStatus(Status.PENDING); // vuelve a disponible
+                giftRepository.save(gift);
+            }
         }
 
         return invitationRepository.save(invitation);
