@@ -18,6 +18,7 @@ public class InvitationMapper {
         response.setId(invitation.getId().toString());
         response.setStatus(invitation.getStatus());
         response.setGuestName(invitation.getName_person());
+        response.setGender(invitation.getGender());
 
         if (invitation.getGift() != null) {
             GiftResponse giftResponse = new GiftResponse(
@@ -34,6 +35,7 @@ public class InvitationMapper {
         Invitation invitation = new Invitation();
         invitation.setName_person(request.getPersonName());
         invitation.setNumber_cell(request.getPersonPhone());
+        invitation.setGender(request.getGender());
         return invitation;
     }
 }

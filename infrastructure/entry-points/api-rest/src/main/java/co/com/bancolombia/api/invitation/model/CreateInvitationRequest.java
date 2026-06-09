@@ -6,4 +6,5 @@ import lombok.Data;
 public class CreateInvitationRequest {
     private String personName;
     private String personPhone;
+    private String gender;
 }

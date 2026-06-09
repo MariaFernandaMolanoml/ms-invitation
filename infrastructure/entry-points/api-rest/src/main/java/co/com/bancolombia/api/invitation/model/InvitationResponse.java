@@ -10,4 +10,5 @@ public class InvitationResponse {
     private Status status;
     private String guestName;
     private GiftResponse gift;
+    private String gender;
 }
