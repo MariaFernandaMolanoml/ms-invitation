@@ -56,6 +56,7 @@ public class InvitationDataRepositoryAdapterImpl implements InvitationRepository
         data.setStatus(invitation.getStatus());
         data.setCreate_date(invitation.getCreate_date());
         data.setConfirm_date(invitation.getConfirm_date());
+        data.setGender(invitation.getGender());
 
         if (invitation.getGift() != null) {
             GiftData giftData = new GiftData();
@@ -77,7 +78,8 @@ public class InvitationDataRepositoryAdapterImpl implements InvitationRepository
                 data.getStatus(),
                 data.getCreate_date(),
                 data.getConfirm_date(),
-                data.getGift() != null ? toDomainGift(data.getGift()) : null
+                data.getGift() != null ? toDomainGift(data.getGift()) : null,
+                data.getGender()
         );
     }
 

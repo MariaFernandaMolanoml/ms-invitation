@@ -44,4 +44,7 @@ public class InvitationData {
     @ManyToOne
     @JoinColumn(name = "gift_id")
     private GiftData gift;
+
+    @Column(name = "gender")
+    private String gender;
 }

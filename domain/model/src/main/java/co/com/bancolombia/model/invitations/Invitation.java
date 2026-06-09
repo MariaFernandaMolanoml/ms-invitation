@@ -20,4 +20,5 @@ public class Invitation {
     private Date create_date;
     private Date confirm_date;
     private Gift gift;
+    private String gender;
 }

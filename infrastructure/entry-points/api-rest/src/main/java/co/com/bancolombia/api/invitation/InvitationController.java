@@ -40,6 +40,7 @@ public class InvitationController {
         Invitation invitation = new Invitation();
         invitation.setName_person(request.getPersonName());
         invitation.setNumber_cell(request.getPersonPhone());
+        invitation.setGender(request.getGender());
 
         Invitation created = invitationUseCase.createInvitation(invitation);
 
