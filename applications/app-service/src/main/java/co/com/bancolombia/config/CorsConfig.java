@@ -15,7 +15,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://thiago-baby-shower.vercel.app"
+                                "https://babyshower-thiago.lol"
                         )
                         .allowedMethods("*")
                         .allowedHeaders("*");
