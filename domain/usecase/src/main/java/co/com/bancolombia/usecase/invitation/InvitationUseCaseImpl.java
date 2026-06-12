@@ -38,15 +38,9 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
 
         List<Gift> allGifts = giftRepository.findAll();
 
-        List<UUID> usedGiftIds = invitationRepository.findAll()
+        List<Gift> availableGifts = giftRepository.findAll()
                 .stream()
-                .map(Invitation::getGift)
-                .filter(Objects::nonNull)
-                .map(Gift::getId)
-                .toList();
-
-        List<Gift> availableGifts = allGifts.stream()
-                .filter(g -> !usedGiftIds.contains(g.getId()))
+                .filter(g -> Status.FREE.equals(g.getStatus()))
                 .toList();
 
         if (availableGifts.isEmpty()) {
@@ -55,6 +49,9 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
 
         Gift randomGift = availableGifts.get(random.nextInt(availableGifts.size()));
 
+        randomGift.setStatus(Status.PENDING);
+        giftRepository.save(randomGift);
+        
         invitation.setGift(randomGift);
 
         return invitationRepository.save(invitation);
@@ -90,10 +87,11 @@ public class InvitationUseCaseImpl implements InvitationUseCase {
 
             invitation.setStatus(Status.REJECTED);
             invitation.setConfirm_date(new Date());
-
+        
             Gift gift = invitation.getGift();
             if (gift != null) {
-                gift.setStatus(Status.PENDING); // vuelve a disponible
+        
+                gift.setStatus(Status.FREE);
                 giftRepository.save(gift);
             }
         }
